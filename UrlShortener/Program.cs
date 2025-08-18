@@ -15,18 +15,17 @@ builder.Services.AddDbContext<UrlShortenerDbContext>(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-// --- Configuração do Redis ---
+
 var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
-// Registra a conexão com o Redis como um Singleton
+
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect(redisConnectionString));
 
-// --- Registra o Background Service ---
+
 builder.Services.AddHostedService<RedisToSqlSyncService>();
 var app = builder.Build();
-app.UseHttpMetrics(); // Captura automaticamente as métricas dos 4 Sinais de Ouro para HTTP
-app.MapMetrics();     // Expõe o endpoint /metrics que o Prometheus vai ler
-
+app.UseHttpMetrics();
+app.MapMetrics();    
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -77,12 +76,12 @@ shortenApi.MapGet("{shortCode}", async (string shortCode, UrlShortenerDbContext 
         if (found is null)
             return Results.NotFound();
         
-        // --- Lógica do Redis ---
+       
         var redisDb = redis.GetDatabase();
         var redisKey = $"access_count:{shortCode}";
         
-        // Dispara o comando de incremento e não espera por ele ("fire and forget")
-        // A contagem não é crítica para o sucesso do redirecionamento.
+        
+       
         _ = redisDb.StringIncrementAsync(redisKey);
 
         return Results.Ok(new UrlResponse(

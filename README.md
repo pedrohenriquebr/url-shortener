@@ -49,7 +49,7 @@ Follow these steps to get a local copy up and running for development and testin
 
 1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/pedrohenriquebr/url-shortener.git](https://github.com/pedrohenriquebr/url-shortener.git)
+    git clone https://github.com/pedrohenriquebr/url-shortener.git
     cd url-shortener
     ```
 

@@ -8,20 +8,17 @@ import threading
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-# --- Configuração do Benchmark ---
+
 BASE_URL = 'http://localhost:5099/shorten'
 
-# Define as ações possíveis e seus pesos para simular uma carga "read-heavy"
-# 85% das requisições serão para redirecionamento (GET)
-ACTIONS = ['POST', 'GET', 'GET_STATS', 'PUT', 'DELETE']
-WEIGHTS = [0.05,   0.85,  0.05,        0.025, 0.025] # Soma deve ser 1.0
 
-# --- Estado Compartilhado (seguro para threads) ---
-# Lista para armazenar os shortCodes criados e disponíveis para teste
+ACTIONS = ['POST', 'GET', 'GET_STATS', 'PUT', 'DELETE']
+WEIGHTS = [0.05,   0.85,  0.05,        0.025, 0.025] 
+
 created_urls_lock = threading.Lock()
 created_urls = []
 
-# --- Funções para cada endpoint da API ---
+
 
 def api_call(session: requests.Session, method: str, url: str, **kwargs):
     """Função genérica para realizar uma chamada de API e medir o tempo."""
@@ -48,14 +45,14 @@ def do_post(session: requests.Session):
                 with created_urls_lock:
                     created_urls.append(new_code)
         except (requests.exceptions.JSONDecodeError, AttributeError):
-            pass # Falhou em obter o shortCode do corpo da resposta
+            pass 
             
     return duration, status
 
 def do_get(session: requests.Session, short_code: str):
     """Acessa/redireciona uma URL encurtada."""
     url = f"{BASE_URL}/{short_code}"
-    # allow_redirects=False para que não siga o 301/302, medindo apenas a resposta da API
+   
     duration, status, _ = api_call(session, 'GET', url, allow_redirects=False)
     return duration, status
 
@@ -92,17 +89,16 @@ def run_task(session: requests.Session):
     action = random.choices(ACTIONS, WEIGHTS)[0]
     
     short_code_to_use = None
-    # Para ações que não são POST, precisamos de um shortCode existente
     if action != 'POST':
         with created_urls_lock:
             if created_urls:
                 short_code_to_use = random.choice(created_urls)
         
-        # Se não tivermos nenhum código ainda, força a criação de um
+       
         if not short_code_to_use:
             action = 'POST'
 
-    # Executa a ação escolhida
+   
     if action == 'POST':
         duration, status = do_post(session)
     elif action == 'GET':
@@ -118,7 +114,6 @@ def run_task(session: requests.Session):
 
     return duration, status, action
 
-# --- Função Principal do Benchmark ---
 
 def benchmark(jobs: int, total_tasks: int, max_time: int):
     print(f"Iniciando benchmark com {jobs} usuários concorrentes, até {total_tasks} tarefas ou {max_time}s.")
@@ -146,7 +141,7 @@ def benchmark(jobs: int, total_tasks: int, max_time: int):
 
     print("\nBenchmark finalizado.")
     
-    # --- Geração do Relatório ---
+   
     end_time = time.time()
     elapsed_time = end_time - start_time
     
@@ -154,22 +149,22 @@ def benchmark(jobs: int, total_tasks: int, max_time: int):
         print("Nenhuma requisição foi concluída.")
         return
 
-    # Agrupa os resultados por tipo de ação
+
     report_data = defaultdict(list)
     for r in results:
         report_data[r['action']].append(r)
 
-    # Relatório Geral
+  
     print("\n--- Resultados Gerais ---")
     print(f"Tempo total decorrido: {elapsed_time:.2f} segundos")
     print(f"Total de requisições concluídas: {len(results)}")
     print(f"Requisições por segundo (RPS): {len(results) / elapsed_time:.2f}")
 
-    # Relatório Detalhado por Endpoint
+
     print("\n--- Detalhes por Endpoint ---")
     for action, action_results in sorted(report_data.items()):
         durations = [r['duration'] for r in action_results]
-        success_count = sum(1 for r in action_results if 200 <= r['status'] < 300 or r['status'] == 302) # GET retorna 302
+        success_count = sum(1 for r in action_results if 200 <= r['status'] < 300 or r['status'] == 302) 
         failed_count = len(action_results) - success_count
         
         print(f"\n-> Endpoint: {action}")

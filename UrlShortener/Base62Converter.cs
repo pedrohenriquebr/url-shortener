@@ -9,15 +9,15 @@ public static class Base62Converter
         var sb = new System.Text.StringBuilder();
         while (id > 0)
         {
-            // Pega o resto da divisão por 62 para encontrar o caractere
+            
             long remainder = id % 62;
-            sb.Insert(0, Characters[(int)remainder]); // Insere no início para inverter a ordem
-            id /= 62; // Divide o ID por 62
+            sb.Insert(0, Characters[(int)remainder]); 
+            id /= 62; 
         }
         return sb.ToString();
     }
 
-    // Você também precisaria da função Decode para testes ou outras funcionalidades
+
     public static long Decode(string shortCode)
     {
         long id = 0;

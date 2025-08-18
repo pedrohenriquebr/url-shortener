@@ -1,0 +1,78 @@
+volumes:
+  db_volume:
+  grafana-storage:
+
+networks:
+  shortener:
+    driver: bridge
+
+
+services:
+  db:
+    image: shortener-mssql
+    container_name: db
+    build:
+      context: ./.docker/db
+    ports:
+      - "1500:1433"
+    volumes:
+      - db_volume:/var/opt/mssql
+    networks:
+      - shortener
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $$SA_PASSWORD -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      retries: 10
+      start_period: 10s
+      timeout: 3s
+  # --- Exportador de Métricas do SQL Server ---
+  sql-exporter:
+    container_name: sql-exporter
+    image: awaragi/prometheus-mssql-exporter
+    ports:
+      - "4000:4000"
+    environment:
+      # A connection string para o exportador se conectar ao seu banco
+      - PASSWORD=HakunaM4t4t4@171
+      - SERVER=host.docker.internal
+      - USERNAME=sa
+      - PORT=1500
+    networks:
+      - shortener
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      
+  # --- Prometheus ---
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml # Mapeia nosso arquivo de configuração
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - shortener
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # --- Grafana ---
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana # Volume para persistir dashboards
+    networks:
+      - shortener
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  redis:
+    container_name: redis
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - shortener

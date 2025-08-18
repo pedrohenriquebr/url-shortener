@@ -1,0 +1,19 @@
+# prometheus/prometheus.yml
+global:
+  scrape_interval: 15s # A cada quantos segundos o Prometheus deve buscar as métricas
+
+scrape_configs:
+  # 1. Alvo para o próprio Prometheus (bom para monitorar a saúde dele)
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # 2. Alvo para a sua API de encurtamento de URL
+  - job_name: 'url-shortener-api'
+    static_configs:
+      - targets: ['host.docker.internal:5099'] # 'url-shortener-api' é o nome do serviço no docker-compose
+
+  # 3. Alvo para o exportador do SQL Server
+  - job_name: 'sql-server'
+    static_configs:
+      - targets: ['sql-exporter:4000'] # 'sql-exporter' é o nome do serviço do exportador

@@ -1,187 +1,112 @@
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Thanks again! Now go create something AMAZING! :D
--->
+# URL Shortener Service
 
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-
-
-
-<!-- PROJECT LOGO -->
-<br />
 <p align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
-
-  <h3 align="center">URL Shortener Service</h3>
-
-  <p align="center">
-    Backend Project for roadmap project: <a href="https://roadmap.sh/projects/url-shortening-service"> URL Shortening Service </a>
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
-    <br />
-  </p>
+  A high-performance URL shortening API built with .NET 8, designed for scalability and observability.
+  <br />
+  This project is an implementation of the <a href="https://roadmap.sh/projects/url-shortening-service"><strong>URL Shortening Service project from roadmap.sh</strong></a>.
+</p>
+<p align="center">
+  <a href="https://github.com/pedrohenriquebr/url-shortener/issues">Report Bug</a>
+  ·
+  <a href="https://github.com/pedrohenriquebr/url-shortener/issues">Request Feature</a>
 </p>
 
+---
 
-
-<!-- TABLE OF CONTENTS -->
-<details open="open">
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
-  </ol>
-</details>
-
-
-
-<!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This is an API for URL Shortening Service made with C# .NET 8 with nativet AOT 
+This project provides a complete backend solution for shortening URLs. It's built with a focus on high performance, scalability, and robust observability, following modern software engineering and SRE principles.
+
+Key features include:
+* **High-Performance Endpoints**: Fast URL shortening and redirection.
+* **Scalable Architecture**: Utilizes Redis for caching and a background service for high-throughput access counting, following CQRS principles.
+* **Full Observability Stack**: Comes with a pre-configured Docker Compose environment including Prometheus and Grafana for real-time monitoring of application and database metrics.
+* **Load Testing Scripts**: Includes Python scripts to benchmark the API and simulate realistic, concurrent user traffic.
 
 ### Built With
 
-* [C#](https://dotnet.microsoft.com/pt-br/languages/csharp)
-* [.NET 8 ](https://learn.microsoft.com/pt-br/dotnet/)
+This project is built with a modern tech stack:
 
+* **Backend**: C# with .NET 8
+* **Database**: Microsoft SQL Server
+* **Cache**: Redis
+* **Containerization**: Docker & Docker Compose
+* **Observability**: Prometheus & Grafana
 
+---
 
-<!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+Follow these steps to get a local copy up and running for development and testing.
 
 ### Prerequisites
 
-### Installation
+* **.NET 8 SDK**: [Download](https://dotnet.microsoft.com/download/dotnet/8.0)
+* **Docker Desktop**: [Download](https://www.docker.com/products/docker-desktop/)
+* **Python 3.10+** (for running benchmark scripts)
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/pedrohenriquebr/url-shortener.git
-   ```
-3. Install nuget packages 
-   ```sh
-   dotnet restore
-   ```
-4. Build 
-   ```sh
-   dotnet build
-   ```
+### Installation & Setup
 
+1.  **Clone the repository:**
+    ```sh
+    git clone [https://github.com/pedrohenriquebr/url-shortener.git](https://github.com/pedrohenriquebr/url-shortener.git)
+    cd url-shortener
+    ```
 
+2.  **Start the infrastructure services:**
+    This command will build the custom SQL Server image and start the database, Redis, Prometheus, and Grafana containers in the background.
+    ```sh
+    docker-compose up --build -d
+    ```
 
-<!-- USAGE EXAMPLES -->
+3.  **Run the API:**
+    You can now run the API project directly from your IDE or via the command line. It will automatically connect to the services running in Docker.
+    ```sh
+    dotnet run --project /UrlShortener/UrlShortener.csproj
+    ```
+    The API will be available at `http://localhost:5099`.
+
+---
+
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+### API Endpoints
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+Once the application is running, you can explore and interact with the API endpoints through the Swagger UI:
 
+* **Swagger UI**: `http://localhost:5099/swagger`
 
+### Observability Stack
 
-<!-- ROADMAP -->
-## Roadmap
+The local environment includes a full monitoring stack to observe the application's performance in real-time.
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
+* **Prometheus**: `http://localhost:9090`
+   * *Check the `Targets` page to ensure Prometheus is successfully scraping metrics from the API and the SQL exporter.*
 
+* **Grafana**: `http://localhost:3000`
+   * *Default login: `admin` / `admin`*
+   * *You will need to configure Prometheus as a data source upon first login. Use `http://prometheus:9090` as the URL.*
 
+---
 
-<!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
 
+---
 
-
-<!-- LICENSE -->
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
+---
 
-
-<!-- CONTACT -->
 ## Contact
 
 Project Link: [https://github.com/pedrohenriquebr/url-shortener/](https://github.com/pedrohenriquebr/url-shortener/)
-
-
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Img Shields](https://shields.io)
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Pages](https://pages.github.com)
-* [Animate.css](https://daneden.github.io/animate.css)
-* [Loaders.css](https://connoratherton.com/loaders)
-* [Slick Carousel](https://kenwheeler.github.io/slick)
-* [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
-* [Sticky Kit](http://leafo.net/sticky-kit)
-* [JVectorMap](http://jvectormap.com)
-* [Font Awesome](https://fontawesome.com)
-
-
-
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png

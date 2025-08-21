@@ -1,51 +1,35 @@
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using UrlShortener.Application.Models;
-using UrlShortener.Domain.Entities;
-using UrlShortener.Infra.Context;
-
 using Carter;
 using Microsoft.AspNetCore.Mvc;
+using UrlShortener.Application.Interfaces;
+using UrlShortener.Application.Models;
+using UrlShortener.Domain.Factories;
 
-namespace UrlShortener.Application.UseCases;
-
+namespace UrlShortener.Application.Features;
 
 public record CreateShortRequest(string Url);
+
 public class CreateShortUrlModule : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/shorten", async ([FromBody] CreateShortRequest request, UrlShortenerDbContext dbContext) =>
+        app.MapPost("/", async (
+            [FromBody] CreateShortRequest request,
+            IShortenedFactory factory,
+            IShortenedUrlRepository repository,
+            IUnitOfWork uow
+        ) =>
         {
-            if (await dbContext.ShortenedUrls.AnyAsync(d => d.LongUrl == request.Url))
-            {
-                return Results.BadRequest("URL already shortened.");
-            }
+            if (await repository.AlreadyExistsAsync(request.Url)) return Results.BadRequest("URL already shortened.");
 
-            Console.WriteLine($"URL Recebida: {request.Url}");
-            var newUrl = new ShortenedUrl()
-            {
-                LongUrl = request.Url,
-                ShortCode = "",
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
-
-            await dbContext.ShortenedUrls.AddAsync(newUrl);
-            newUrl.ShortCode = Base62Converter.Encode(newUrl.Id);
-
-            await dbContext.SaveChangesAsync();
+            Console.WriteLine($"Received URL: {request.Url}");
+            var newUrl = factory.Create(request.Url);
+            await repository.AddAsync(newUrl);
+            await uow.SaveChangesAsync();
 
 
             return Results.CreatedAtRoute("GetUrlShortened",
                 new { shortCode = newUrl.ShortCode },
-                new UrlResponse(
-                    newUrl.Id.ToString(),
-                    newUrl.LongUrl,
-                    newUrl.ShortCode,
-                    newUrl.CreatedAt,
-                    newUrl.UpdatedAt
-                )
+                (UrlResponse)newUrl
             );
         });
     }

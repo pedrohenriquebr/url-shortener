@@ -1,3 +1,3 @@
 namespace UrlShortener.Application.Models;
 
-public record UrlUpdateRequest(string Url);
+public record UpdateShortUrlRequest(string Url);

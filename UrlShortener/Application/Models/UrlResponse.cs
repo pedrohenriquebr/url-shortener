@@ -1,3 +1,5 @@
+using UrlShortener.Domain.Entities;
+
 namespace UrlShortener.Application.Models;
 
 public record UrlResponse(
@@ -5,4 +7,16 @@ public record UrlResponse(
     string Url,
     string ShortCode,
     DateTime CreatedAt,
-    DateTime UpdatedAt);
+    DateTime UpdatedAt)
+{
+    public static implicit operator UrlResponse(ShortenedUrl newUrl)
+    {
+        return new UrlResponse(
+            newUrl.Id.ToString(),
+            newUrl.LongUrl,
+            newUrl.ShortCode,
+            newUrl.CreatedAt,
+            newUrl.UpdatedAt
+        );
+    }
+}

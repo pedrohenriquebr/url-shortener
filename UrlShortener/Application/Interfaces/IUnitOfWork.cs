@@ -1,6 +1,6 @@
 namespace UrlShortener.Application.Interfaces;
 
-public class IUnitOfWork
+public interface IUnitOfWork
 {
-    
+    public Task SaveChangesAsync();
 }

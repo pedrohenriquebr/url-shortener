@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace UrlShortener;
 
 public static class Base62Converter
@@ -8,14 +10,14 @@ public static class Base62Converter
     {
         if (id == 0) return Characters[0].ToString();
 
-        var sb = new System.Text.StringBuilder();
+        var sb = new StringBuilder();
         while (id > 0)
         {
-            
-            long remainder = id % 62;
-            sb.Insert(0, Characters[(int)remainder]); 
-            id /= 62; 
+            var remainder = id % 62;
+            sb.Insert(0, Characters[(int)remainder]);
+            id /= 62;
         }
+
         return sb.ToString();
     }
 
@@ -23,11 +25,12 @@ public static class Base62Converter
     public static long Decode(string shortCode)
     {
         long id = 0;
-        for (int i = 0; i < shortCode.Length; i++)
+        for (var i = 0; i < shortCode.Length; i++)
         {
-            int charPosition = Characters.IndexOf(shortCode[i]);
+            var charPosition = Characters.IndexOf(shortCode[i]);
             id = id * 62 + charPosition;
         }
+
         return id;
     }
 }

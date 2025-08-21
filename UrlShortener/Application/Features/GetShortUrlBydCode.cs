@@ -1,21 +1,19 @@
 using Carter;
-using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
+using UrlShortener.Application.Interfaces;
 using UrlShortener.Application.Models;
-using UrlShortener.Domain.Entities;
-using UrlShortener.Infra.Context;
 
-namespace UrlShortener.Application.UseCases;
+namespace UrlShortener.Application.Features;
 
-public class GetShortUrlBydCode : ICarterModule
+public class GetShortUrlByCode : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("{shortCode}",
-                async (string shortCode, UrlShortenerDbContext dbContext, IConnectionMultiplexer redis) =>
+        app.MapGet("/{shortCode}",
+                async (string shortCode, IShortenedUrlRepository repository, IConnectionMultiplexer redis) =>
                 {
-                    ShortenedUrl? found =
-                        await dbContext.ShortenedUrls.FirstOrDefaultAsync(d => d.ShortCode == shortCode);
+                    var found =
+                        await repository.FirstOrDefaultAsync(shortCode);
 
                     if (found is null)
                         return Results.NotFound();
@@ -27,13 +25,7 @@ public class GetShortUrlBydCode : ICarterModule
 
                     _ = redisDb.StringIncrementAsync(redisKey);
 
-                    return Results.Ok(new UrlResponse(
-                        Id: found.Id.ToString(),
-                        Url: found.LongUrl,
-                        ShortCode: found.ShortCode,
-                        CreatedAt: found.CreatedAt,
-                        UpdatedAt: found.UpdatedAt
-                    ));
+                    return Results.Ok((UrlResponse)found);
                 })
             .WithName("GetUrlShortened");
     }

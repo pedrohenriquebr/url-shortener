@@ -20,7 +20,7 @@ services:
     networks:
       - shortener
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $$SA_PASSWORD -Q 'SELECT 1' || exit 1"]
+      test: [ "CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $$SA_PASSWORD -Q 'SELECT 1' || exit 1" ]
       interval: 10s
       retries: 10
       start_period: 10s
@@ -41,7 +41,7 @@ services:
       - shortener
     extra_hosts:
       - "host.docker.internal:host-gateway"
-      
+  
   # --- Prometheus ---
   prometheus:
     container_name: prometheus

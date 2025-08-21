@@ -36,6 +36,8 @@ public static class DependencyInjection
     {
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Startup>());
+        
         return builder;
     }
 }

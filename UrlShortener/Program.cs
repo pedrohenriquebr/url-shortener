@@ -28,4 +28,10 @@ app.UseObservabilityServices();
 app.UseEntryPoint();
 app.MapEndpoints();
 
+
+
 app.Run();
+
+public class Startup
+{
+}

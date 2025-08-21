@@ -1,3 +1,5 @@
+namespace UrlShortener;
+
 public static class Base62Converter
 {
     private static readonly string Characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";

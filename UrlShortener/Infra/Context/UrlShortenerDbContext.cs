@@ -20,7 +20,7 @@ public class UrlShortenerDbContext : DbContext
         
        
         modelBuilder.HasSequence("ShortenedUrl_HiLoSequence")
-            .IncrementsBy(10); 
+            .IncrementsBy(2_000_000); 
         
         modelBuilder.Entity<ShortenedUrl>(builder =>
         {
